@@ -1,3 +1,3 @@
 class AppConstants {
-  static const String apiKey = 'AIzaSyBPi3_fHAuIhYcvofXt72zj5du-6OAIkME';
+  static const String apiKey = '<Put your API key here>';
 }
