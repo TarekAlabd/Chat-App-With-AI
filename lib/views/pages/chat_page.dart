@@ -1,5 +1,6 @@
 import 'package:chat_app_ai/cubit/chat_cubit.dart';
 import 'package:chat_app_ai/views/widgets/chat_message_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -36,6 +37,32 @@ class _ChatPageState extends State<ChatPage> {
         duration: const Duration(milliseconds: 700),
         curve: Curves.easeInOut,
       ),
+    );
+  }
+
+  void showOptions() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) {
+        return CupertinoActionSheet(
+          actions: [
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                BlocProvider.of<ChatCubit>(context).pickImageFromCamera();
+              },
+              child: const Text('Camera'),
+            ),
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                BlocProvider.of<ChatCubit>(context).pickImageFromGallery();
+              },
+              child: const Text('Gallery'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -138,15 +165,17 @@ class _ChatPageState extends State<ChatPage> {
                           decoration: InputDecoration(
                             hintText: 'Type a message',
                             suffix: InkWell(
-                              child: const Icon(Icons.camera_alt),
-                              onTap: () async {
-                                await chatCubit.pickImage();
+                              child: const Icon(Icons.attachment),
+                              onTap: () {
+                                showOptions();
                               },
                             ),
                           ),
                           onSubmitted: (value) {
                             chatCubit.sendMessage(value);
                             _messageController.clear();
+                            chatCubit.removeImage();
+                            _scrollDown();
                           },
                         ),
                       ),

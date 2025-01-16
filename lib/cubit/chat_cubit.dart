@@ -4,6 +4,7 @@ import 'package:chat_app_ai/models/message_model.dart';
 import 'package:chat_app_ai/services/chat_services.dart';
 import 'package:chat_app_ai/services/native_services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 part 'chat_state.dart';
 
@@ -31,8 +32,16 @@ class ChatCubit extends Cubit<ChatState> {
     chatServices.startChattingSession();
   }
 
-  Future<void> pickImage() async {
-    final image = await nativeServices.pickImage();
+  Future<void> pickImageFromCamera() async {
+    final image = await nativeServices.pickImage(ImageSource.camera);
+    if (image != null) {
+      selectedImage = image;
+      emit(ImagePicked(image));
+    }
+  }
+
+  Future<void> pickImageFromGallery() async {
+    final image = await nativeServices.pickImage(ImageSource.gallery);
     if (image != null) {
       selectedImage = image;
       emit(ImagePicked(image));
