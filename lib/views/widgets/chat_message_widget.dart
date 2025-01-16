@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:chat_app_ai/models/message_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +14,10 @@ class ChatMessageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final formattedTime = DateFormat('hh:mm a').format(message.time);
+    final textStyle = Theme.of(context).textTheme.bodyLarge!.copyWith(
+          color: message.isUser ? Colors.white : null,
+          fontWeight: FontWeight.normal,
+        );
 
     return Align(
       alignment: message.isUser ? Alignment.centerLeft : Alignment.centerRight,
@@ -35,13 +40,21 @@ class ChatMessageWidget extends StatelessWidget {
                     color: message.isUser ? Colors.blue : null,
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
-                      child: Text(
-                        message.text,
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              color: message.isUser ? Colors.white : null,
-                              fontWeight: FontWeight.normal,
+                      child: message.isUser
+                          ? Text(
+                              message.text,
+                              style: textStyle,
+                            )
+                          : AnimatedTextKit(
+                              repeatForever: false,
+                              totalRepeatCount: 1,
+                              animatedTexts: [
+                                TyperAnimatedText(
+                                  message.text,
+                                  textStyle: textStyle,
+                                ),
+                              ],
                             ),
-                      ),
                     ),
                   ),
                   const SizedBox(height: 4.0),
