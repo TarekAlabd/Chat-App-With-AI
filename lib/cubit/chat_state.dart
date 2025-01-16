@@ -29,3 +29,11 @@ final class SendingMessageFailed extends ChatState {
 
   const SendingMessageFailed(this.error);
 }
+
+final class ImagePicked extends ChatState {
+  final File image;
+
+  const ImagePicked(this.image);
+}
+
+final class ImageRemoved extends ChatState {}

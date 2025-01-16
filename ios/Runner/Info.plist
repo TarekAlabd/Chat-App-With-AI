@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need to access photo gallery to be able to send images to the AI model</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need to access the camera to be able to send images to the AI model</string>
 </dict>
 </plist>
