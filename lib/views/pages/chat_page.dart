@@ -12,18 +12,31 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   late final TextEditingController _messageController;
+  late final ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
     BlocProvider.of<ChatCubit>(context).startChattingSession();
     _messageController = TextEditingController();
+    _scrollController = ScrollController();
   }
 
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollDown() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 700),
+        curve: Curves.easeInOut,
+      ),
+    );
   }
 
   @override
@@ -47,6 +60,7 @@ class _ChatPageState extends State<ChatPage> {
                     if (state is ChatSuccess) {
                       final messages = state.messages;
                       return ListView.separated(
+                        controller: _scrollController,
                         itemCount: messages.length,
                         separatorBuilder: (_, __) =>
                             const SizedBox(height: 8.0),
@@ -80,7 +94,8 @@ class _ChatPageState extends State<ChatPage> {
                   BlocConsumer<ChatCubit, ChatState>(
                     bloc: chatCubit,
                     listenWhen: (previous, current) =>
-                        current is SendingMessageFailed,
+                        current is SendingMessageFailed ||
+                        current is ChatSuccess,
                     listener: (context, state) {
                       if (state is SendingMessageFailed) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -88,6 +103,8 @@ class _ChatPageState extends State<ChatPage> {
                             content: Text(state.error),
                           ),
                         );
+                      } else if (state is ChatSuccess) {
+                        _scrollDown();
                       }
                     },
                     buildWhen: (previous, current) =>
@@ -103,6 +120,7 @@ class _ChatPageState extends State<ChatPage> {
                         onPressed: () {
                           chatCubit.sendMessage(_messageController.text);
                           _messageController.clear();
+                          _scrollDown();
                         },
                       );
                     },
